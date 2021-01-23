@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.controller.Office">
+    <TabPane layoutX="221.0" layoutY="71.0" prefHeight="400.0" prefWidth="600.0" side="LEFT" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <Tab text="签到打卡">
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                <TabPane layoutX="50.0" layoutY="69.0" prefHeight="400.0" prefWidth="571.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <Tab text="签到">
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <Button fx:id="ClockButton" layoutX="214.0" layoutY="135.0" mnemonicParsing="false" onAction="#handleClock" text="打卡" />
+                            <Label fx:id="clockLabel" layoutX="208.0" layoutY="193.0" text="今日你还未打卡" />
+                            <Label layoutX="177.0" layoutY="84.0" text="打卡时间: 7:00-18:00" />
+                        </AnchorPane>
+                    </Tab>
+                    <Tab text="统计">
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <TableView fx:id="staffTable" layoutX="163.0" layoutY="63.0" prefHeight="371.0" prefWidth="571.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <columns>
+                                    <TableColumn fx:id="name" prefWidth="75.0" text="姓名" />
+                                    <TableColumn fx:id="workID" prefWidth="75.0" text="工号" />
+                                    <TableColumn fx:id="department" prefWidth="75.0" text="部门" />
+                                    <TableColumn fx:id="position" prefWidth="75.0" text="职位" />
+                                    <TableColumn fx:id="date" prefWidth="75.0" text="日期" />
+                                    <TableColumn fx:id="time" prefWidth="75.0" text="时间" />
+                                    <TableColumn fx:id="statement" prefWidth="75.0" text="签到状况" />
+                                </columns>
+                            </TableView>
+                        </AnchorPane>
+                    </Tab>
+                </TabPane>
+            </AnchorPane>
+        </Tab>
+        <Tab text="OA审批">
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                <TableView fx:id="applyTable" prefHeight="400.0" prefWidth="571.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <columns>
+                        <TableColumn fx:id="workIDa" text="工号" />
+                        <TableColumn fx:id="type" text="类型" />
+                        <TableColumn fx:id="title" text="标题" />
+                        <TableColumn fx:id="content" text="正文" />
+                        <TableColumn fx:id="applyTime" text="申请时间" />
+                        <TableColumn fx:id="startTime" text="开始时间" />
+                        <TableColumn fx:id="endTime" text="结束时间" />
+                        <TableColumn fx:id="State" onEditCommit="#onStateSubmit" text="状态" />
+                    </columns>
+                </TableView>
+            </AnchorPane>
+        </Tab>
+        <Tab text="日志">
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                <TabPane layoutX="119.0" layoutY="87.0" prefHeight="400.0" prefWidth="571.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <Tab text="写日志" />
+                    <Tab text="看日志" />
+                </TabPane>
+            </AnchorPane>
+        </Tab>
+        <Tab text="智能人事">
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                <VBox layoutX="85.0" layoutY="14.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <HBox>
+                        <Label text="标题" />
+                        <TextField fx:id="Title" />
+                    </HBox>
+                    <HBox>
+                        <Label text="类型" />
+                        <TextField fx:id="Type" />
+                    </HBox>
+                    <HBox>
+                        <Label text="正文" />
+                        <TextArea fx:id="Content" prefHeight="200.0" prefWidth="200.0" />
+                    </HBox>
+                    <HBox>
+                        <Label text="开始时间" />
+                        <TextField fx:id="StartTime" />
+                        <Label text="(格式:yyyy-MM-dd hh:mm:ss)" />
+                    </HBox>
+                    <HBox>
+                        <Label text="结束时间" />
+                        <TextField fx:id="EndTime" />
+                        <Label text="(格式:yyyy-MM-dd hh:mm:ss)" />
+                    </HBox>
+                </VBox>
+                <HBox layoutX="77.0" layoutY="292.0">
+                    <Button mnemonicParsing="false" onAction="#handleOK" text="确定" />
+                    <Button mnemonicParsing="false" onAction="#handleCancel" text="取消" />
+                </HBox>
+            </AnchorPane>
+        </Tab>
+    </TabPane>
+</AnchorPane>
