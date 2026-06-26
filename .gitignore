@@ -1,3 +1,23 @@
-# 项目排除路径
+# 编译输出
 /out/
 /target/
+
+# IDE - IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# IDE - Eclipse
+.classpath
+.project
+.settings/
+
+# IDE - VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# 日志
+*.log

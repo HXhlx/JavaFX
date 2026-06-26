@@ -7,7 +7,6 @@ import sample.App;
 import sample.model.Staff;
 
 import java.sql.*;
-import java.util.ArrayList;
 
 public class Login {
     @FXML
@@ -22,10 +21,18 @@ public class Login {
     }
 
     public void handleLogin() {
-        try {
-            ResultSet rs = mysql.Select("select * from staff where phone = ? and passwd = ?", phone.getText(), password.getText());
+        try (ResultSet rs = mysql.Select("select * from staff where phone = ? and passwd = ?", phone.getText(), password.getText())) {
             if (rs.next()) {
-                Staff currentStaff = new Staff(rs);
+                Staff currentStaff = new Staff(
+                    rs.getString("Sname"),
+                    rs.getInt("WorkID"),
+                    rs.getString("Department"),
+                    rs.getString("Position"),
+                    rs.getString("Phone"),
+                    rs.getString("Passwd"),
+                    rs.getString("Authority")
+                );
+                mysql.close();
                 app.showOffice(currentStaff);
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -34,8 +41,12 @@ public class Login {
                 alert.setContentText("号码或密码错误,请重新输入");
                 alert.showAndWait();
             }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("数据库错误");
+            alert.setHeaderText("查询失败");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
         }
     }
 }

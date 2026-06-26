@@ -8,10 +8,10 @@ import sample.model.*;
 
 import java.sql.*;
 import java.text.*;
-import java.util.Calendar;
 
 public class Office {
-    public TableColumn<Apply, String> State;
+    @FXML
+    private TableColumn<Apply, String> State;
     @FXML
     private TableView<Apply> applyTable;
     @FXML
@@ -74,8 +74,7 @@ public class Office {
     }
 
     public void setUsers(Staff staff) {
-        try {
-            ResultSet rs = mysql.Select("select * from clock where WorkID = ? and CDate = ?", staff.getWorkID(), new Date(System.currentTimeMillis()));
+        try (ResultSet rs = mysql.Select("select * from clock where WorkID = ? and CDate = ?", staff.getWorkID(), new Date(System.currentTimeMillis()))) {
             if (rs.next()) {
                 clockLabel.setText("今日已打卡");
                 ClockButton.setDisable(true);
@@ -84,8 +83,8 @@ public class Office {
                 ClockButton.setDisable(false);
             }
             this.staff = staff;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            showAlert("数据库错误", "查询打卡状态失败", e.getMessage());
         }
     }
 
@@ -116,14 +115,20 @@ public class Office {
     @FXML
     private void initialize() {
         try {
-            ResultSet rs = mysql.Select("select sname, staff.workid, department, position, phone, passwd, Authority, cdate, ctime, statement from staff left join clock on staff.WorkID = clock.WorkID");
-            while (rs.next()) clocks.add(new Clock(rs));
+            try (ResultSet rs = mysql.Select("select sname, staff.workid, department, position, phone, passwd, Authority, cdate, ctime, statement from staff left join clock on staff.WorkID = clock.WorkID")) {
+                while (rs.next()) {
+                    clocks.add(new Clock(rs));
+                }
+            }
             iniStaffTable();
-            rs = mysql.Select("select * from apply");
-            while (rs.next()) applies.add(new Apply(rs));
+            try (ResultSet rs = mysql.Select("select * from apply")) {
+                while (rs.next()) {
+                    applies.add(new Apply(rs));
+                }
+            }
             iniApplyTable();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            showAlert("数据库错误", "加载数据失败", e.getMessage());
         }
     }
 
@@ -131,24 +136,29 @@ public class Office {
     private void handleClock() {
         Date date = new Date(System.currentTimeMillis());
         Time time = new Time(System.currentTimeMillis());
-        if (mysql.Operator("insert into clock values (?, ?, ?, '已签到')", staff.getWorkID(), date, time) > 0) {
-            clockLabel.setText("今日已打卡");
-            ClockButton.setDisable(true);
-            clocks.add(new Clock(staff, date, time, "已签到"));
+        try {
+            if (mysql.Operator("insert into clock values (?, ?, ?, '已签到')", staff.getWorkID(), date, time) > 0) {
+                clockLabel.setText("今日已打卡");
+                ClockButton.setDisable(true);
+                clocks.add(new Clock(staff, date, time, "已签到"));
+            }
+        } catch (SQLException e) {
+            showAlert("打卡失败", "写入数据库失败", e.getMessage());
         }
     }
 
     @FXML
     private void handleOK() {
         Time time = new Time(System.currentTimeMillis());
-        if (mysql.Operator("insert into apply (WorkID, Type, Title, Content, ATime, BeginTime, EndTime, State) values (?, ?, ?, ?, ?, ?, ?, ?)", staff.getWorkID(), Type.getText(), Title.getText(), Content.getText(), new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss").format(time), StartTime.getText(), EndTime.getText(), "未审批") > 0) {
-            applies.add(new Apply(staff.getWorkID(), Type.getText(), Title.getText(), Content.getText(), time, String2Time(StartTime.getText()), String2Time(EndTime.getText()), "未审批"));
-        } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("保存失败");
-            alert.setHeaderText("插入数据库失败");
-            alert.setContentText("检查是否有格式错误");
-            alert.showAndWait();
+        try {
+            if (mysql.Operator("insert into apply (WorkID, Type, Title, Content, ATime, BeginTime, EndTime, State) values (?, ?, ?, ?, ?, ?, ?, ?)",
+                    staff.getWorkID(), Type.getText(), Title.getText(), Content.getText(),
+                    new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time),
+                    StartTime.getText(), EndTime.getText(), "未审批") > 0) {
+                applies.add(new Apply(staff.getWorkID(), Type.getText(), Title.getText(), Content.getText(), time, String2Time(StartTime.getText()), String2Time(EndTime.getText()), "未审批"));
+            }
+        } catch (SQLException e) {
+            showAlert("保存失败", "插入数据库失败", e.getMessage());
         }
     }
 
@@ -162,9 +172,21 @@ public class Office {
     }
 
     @FXML
-    private void onStateSubmit(TableColumn.CellEditEvent<Apply, String> applyStringCellEditEvent) {
-        Apply apply = applyStringCellEditEvent.getRowValue();
-        apply.setState(applyStringCellEditEvent.getNewValue());
-        mysql.Operator("update apply set State = ? where ANo = ?", apply.getState(), apply.getId());
+    private void onStateSubmit(TableColumn.CellEditEvent<Apply, String> event) {
+        Apply apply = event.getRowValue();
+        apply.setState(event.getNewValue());
+        try {
+            mysql.Operator("update apply set State = ? where ANo = ?", apply.getState(), apply.getId());
+        } catch (SQLException e) {
+            showAlert("更新失败", "修改审批状态失败", e.getMessage());
+        }
+    }
+
+    private void showAlert(String title, String header, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }

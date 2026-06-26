@@ -9,7 +9,7 @@ public class Staff extends Position {
     protected IntegerProperty WorkID;
     private final StringProperty phone;
     private final StringProperty passwd;
-    private final StringProperty autority;
+    private final StringProperty authority;
 
     public Staff(Staff staff) {
         super(staff.getPosition(), staff.getDepartment());
@@ -17,14 +17,14 @@ public class Staff extends Position {
         WorkID = staff.WorkID;
         phone = staff.phone;
         passwd = staff.passwd;
-        autority = staff.autority;
+        authority = staff.authority;
     }
 
     public Staff(int workID) {
         this(null, workID, null, null, null, null, null);
     }
 
-    public Staff(String sname, Integer workID, String department, String position, String phone, String passwd, String autor) {
+    public Staff(String sname, Integer workID, String department, String position, String phone, String passwd, String authority) {
         super(position, department);
         Sname = new SimpleStringProperty(sname);
         WorkID = new SimpleIntegerProperty(workID);
@@ -32,7 +32,7 @@ public class Staff extends Position {
         this.position = new SimpleStringProperty(position);
         this.phone = new SimpleStringProperty(phone);
         this.passwd = new SimpleStringProperty(passwd);
-        autority = new SimpleStringProperty(autor);
+        this.authority = new SimpleStringProperty(authority);
     }
 
     public Staff(ResultSet rs) throws SQLException {
@@ -87,15 +87,15 @@ public class Staff extends Position {
         this.passwd.set(passwd);
     }
 
-    public String getAutority() {
-        return autority.get();
+    public String getAuthority() {
+        return authority.get();
     }
 
-    public StringProperty autorityProperty() {
-        return autority;
+    public StringProperty authorityProperty() {
+        return authority;
     }
 
-    public void setAutority(String autority) {
-        this.autority.set(autority);
+    public void setAuthority(String authority) {
+        this.authority.set(authority);
     }
 }
